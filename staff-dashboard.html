@@ -1,0 +1,2481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>B-RACHEAL | Staff Dashboard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .topbar {
+            background: #123b63;
+            color: #ffffff;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .brand {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .staff-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 14px;
+        }
+
+        .logout-button {
+            border: 1px solid rgba(255,255,255,0.7);
+            background: transparent;
+            color: #ffffff;
+            padding: 9px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .logout-button:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .logout-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            margin-bottom: 25px;
+        }
+
+        .page-title h1 {
+            margin: 0 0 7px;
+            font-size: 28px;
+            color: #123b63;
+        }
+
+        .page-title p {
+            margin: 0;
+            color: #667085;
+            font-size: 14px;
+        }
+
+        .message {
+            display: none;
+            padding: 13px 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .message.success {
+            display: block;
+            background: #ecfdf3;
+            border: 1px solid #abefc6;
+            color: #027a48;
+        }
+
+        .message.error {
+            display: block;
+            background: #fef3f2;
+            border: 1px solid #fecdca;
+            color: #b42318;
+        }
+
+        .message.loading {
+            display: block;
+            background: #eff8ff;
+            border: 1px solid #b2ddff;
+            color: #175cd3;
+        }
+
+        .section {
+            background: #ffffff;
+            border: 1px solid #dfe5ec;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 17px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            background: #fafbfc;
+        }
+
+        .section-header h2 {
+            margin: 0;
+            font-size: 18px;
+            color: #123b63;
+        }
+
+        .section-body {
+            padding: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 2px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #344054;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            border: 1px solid #cfd6df;
+            border-radius: 6px;
+            padding: 11px 12px;
+            font-size: 14px;
+            font-family: inherit;
+            background: #ffffff;
+            outline: none;
+        }
+
+        input,
+        select {
+            height: 44px;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #2563eb;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        .primary-button {
+            border: none;
+            background: #123b63;
+            color: #ffffff;
+            padding: 11px 18px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .primary-button:hover {
+            background: #0d2d4d;
+        }
+
+        .primary-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .secondary-button {
+            border: 1px solid #cfd6df;
+            background: #ffffff;
+            color: #344054;
+            padding: 11px 18px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .secondary-button:hover {
+            background: #f8fafc;
+        }
+
+        .secondary-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .search-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-row input {
+            flex: 1;
+        }
+
+        .search-row button {
+            flex-shrink: 0;
+        }
+
+        .results {
+            margin-top: 20px;
+        }
+
+        .results-title {
+            margin: 0 0 12px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #344054;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 650px;
+        }
+
+        th,
+        td {
+            padding: 12px 14px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #344054;
+            font-weight: 700;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-text {
+            color: #667085;
+            padding: 15px 0;
+            font-size: 14px;
+        }
+
+        .patient-record {
+            display: none;
+        }
+
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .record-header h2 {
+            margin: 0 0 5px;
+            color: #123b63;
+            font-size: 21px;
+        }
+
+        .patient-id {
+            margin: 0;
+            color: #667085;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .record-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .record-item {
+            padding: 13px 15px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .record-item:nth-child(odd) {
+            border-right: 1px solid #e5e7eb;
+        }
+
+        .record-item-label {
+            display: block;
+            font-size: 12px;
+            color: #667085;
+            margin-bottom: 5px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .record-item-value {
+            font-size: 14px;
+            color: #1f2937;
+            word-break: break-word;
+        }
+
+        .treatment-section {
+            margin-top: 25px;
+        }
+
+        .treatment-section h3 {
+            margin: 0 0 15px;
+            font-size: 18px;
+            color: #123b63;
+        }
+
+        .treatment-entry {
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 12px;
+            background: #fafbfc;
+        }
+
+        .treatment-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: #667085;
+        }
+
+        .treatment-meta strong {
+            color: #344054;
+        }
+
+        .treatment-details {
+            white-space: pre-wrap;
+            line-height: 1.6;
+            font-size: 14px;
+            color: #1f2937;
+        }
+
+        .empty-state {
+            padding: 20px;
+            text-align: center;
+            color: #667085;
+            font-size: 14px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+        }
+
+        @media (max-width: 700px) {
+
+            .topbar {
+                padding: 14px 16px;
+            }
+
+            .brand {
+                font-size: 19px;
+            }
+
+            .staff-info {
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 7px;
+            }
+
+            .container {
+                margin: 20px auto;
+                padding: 0 14px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .search-row {
+                flex-direction: column;
+            }
+
+            .search-row button {
+                width: 100%;
+            }
+
+            .record-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .record-item:nth-child(odd) {
+                border-right: none;
+            }
+
+            .record-header {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="topbar">
+
+        <div class="brand">
+            B-RACHEAL
+        </div>
+
+        <div class="staff-info">
+
+            <span>
+                Staff: <strong id="staffName">Loading...</strong>
+            </span>
+
+            <button
+                type="button"
+                id="logoutButton"
+                class="logout-button"
+            >
+                Logout
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <main class="container">
+
+        <div class="page-title">
+            <h1>Staff Dashboard</h1>
+            <p>Patient registration and medical records</p>
+        </div>
+
+
+        <div
+            id="dashboardMessage"
+            class="message"
+        ></div>
+
+
+        <!-- REGISTER PATIENT -->
+
+        <section class="section">
+
+            <div class="section-header">
+                <h2>Register New Patient</h2>
+            </div>
+
+            <div class="section-body">
+
+                <form id="patientForm">
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+                            <label for="patientName">
+                                Full Name
+                            </label>
+
+                            <input
+                                type="text"
+                                id="patientName"
+                                required
+                                placeholder="Enter patient's full name"
+                            >
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="patientSex">
+                                Sex
+                            </label>
+
+                            <select id="patientSex">
+
+                                <option value="">
+                                    Select sex
+                                </option>
+
+                                <option value="Male">
+                                    Male
+                                </option>
+
+                                <option value="Female">
+                                    Female
+                                </option>
+
+                            </select>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="patientDateOfBirth">
+                                Date of Birth
+                            </label>
+
+                            <input
+                                type="date"
+                                id="patientDateOfBirth"
+                            >
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="patientPhone">
+                                Phone Number
+                            </label>
+
+                            <input
+                                type="tel"
+                                id="patientPhone"
+                                placeholder="Enter phone number"
+                            >
+                        </div>
+
+
+                        <div class="form-group full">
+                            <label for="patientAddress">
+                                Address
+                            </label>
+
+                            <textarea
+                                id="patientAddress"
+                                placeholder="Enter patient's address"
+                            ></textarea>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="nextOfKin">
+                                Next of Kin
+                            </label>
+
+                            <input
+                                type="text"
+                                id="nextOfKin"
+                                placeholder="Enter next of kin"
+                            >
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="nextOfKinPhone">
+                                Next of Kin Phone
+                            </label>
+
+                            <input
+                                type="tel"
+                                id="nextOfKinPhone"
+                                placeholder="Enter next of kin phone"
+                            >
+                        </div>
+
+                    </div>
+
+
+                    <div class="button-row">
+
+                        <button
+                            type="submit"
+                            id="registerPatientButton"
+                            class="primary-button"
+                        >
+                            Register Patient
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+        <!-- SEARCH PATIENT -->
+
+        <section class="section">
+
+            <div class="section-header">
+                <h2>Find Existing Patient</h2>
+            </div>
+
+            <div class="section-body">
+
+                <div class="search-row">
+
+                    <input
+                        type="text"
+                        id="patientSearch"
+                        placeholder="Search by patient name or Patient ID"
+                    >
+
+                    <button
+                        type="button"
+                        id="searchPatientButton"
+                        class="primary-button"
+                    >
+                        Search
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="patientResults"
+                    class="results"
+                ></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- PATIENT RECORD -->
+
+        <section
+            class="section patient-record"
+            id="patientRecordPanel"
+        >
+
+            <div class="section-body">
+
+                <div class="record-header">
+
+                    <div>
+
+                        <h2 id="recordPatientName">
+                            Patient Record
+                        </h2>
+
+                        <p
+                            class="patient-id"
+                            id="recordPatientId"
+                        ></p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        id="closeRecordButton"
+                        class="secondary-button"
+                    >
+                        Close Record
+                    </button>
+
+                </div>
+
+
+                <!-- PATIENT INFORMATION -->
+
+                <div class="record-grid">
+
+                    <div class="record-item">
+
+                        <span class="record-item-label">
+                            Full Name
+                        </span>
+
+                        <span
+                            class="record-item-value"
+                            id="recordName"
+                        ></span>
+
+                    </div>
+
+
+                    <div class="record-item">
+
+                        <span class="record-item-label">
+                            Sex
+                        </span>
+
+                        <span
+                            class="record-item-value"
+                            id="recordSex"
+                        ></span>
+
+                    </div>
+
+
+                    <div class="record-item">
+
+                        <span class="record-item-label">
+                            Date of Birth
+                        </span>
+
+                        <span
+                            class="record-item-value"
+                            id="recordDateOfBirth"
+                        ></span>
+
+                    </div>
+
+
+                    <div class="record-item">
+
+                        <span class="record-item-label">
+                            Phone
+                        </span>
+
+                        <span
+                            class="record-item-value"
+                            id="recordPhone"
+                        ></span>
+
+                    </div>
+
+
+                    <div class="record-item">
+
+                        <span class="record-item-label">
+                            Address
+                        </span>
+
+                        <span
+                            class="record-item-value"
+                            id="recordAddress"
+                        ></span>
+
+                    </div>
+
+
+                    <div class="record-item">
+
+                        <span class="record-item-label">
+                            Next of Kin
+                        </span>
+
+                        <span
+                            class="record-item-value"
+                            id="recordNextOfKin"
+                        ></span>
+
+                    </div>
+
+
+                    <div class="record-item">
+
+                        <span class="record-item-label">
+                            Next of Kin Phone
+                        </span>
+
+                        <span
+                            class="record-item-value"
+                            id="recordNextOfKinPhone"
+                        ></span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- EDIT PATIENT -->
+
+                <div class="treatment-section">
+
+                    <h3>Edit Patient Information</h3>
+
+                    <form id="editPatientForm">
+
+                        <div class="form-grid">
+
+                            <div class="form-group">
+
+                                <label for="editName">
+                                    Full Name
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="editName"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="editSex">
+                                    Sex
+                                </label>
+
+                                <select id="editSex">
+
+                                    <option value="">
+                                        Select sex
+                                    </option>
+
+                                    <option value="Male">
+                                        Male
+                                    </option>
+
+                                    <option value="Female">
+                                        Female
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="editDateOfBirth">
+                                    Date of Birth
+                                </label>
+
+                                <input
+                                    type="date"
+                                    id="editDateOfBirth"
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="editPhone">
+                                    Phone Number
+                                </label>
+
+                                <input
+                                    type="tel"
+                                    id="editPhone"
+                                >
+
+                            </div>
+
+
+                            <div class="form-group full">
+
+                                <label for="editAddress">
+                                    Address
+                                </label>
+
+                                <textarea
+                                    id="editAddress"
+                                ></textarea>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="editNextOfKin">
+                                    Next of Kin
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="editNextOfKin"
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="editNextOfKinPhone">
+                                    Next of Kin Phone
+                                </label>
+
+                                <input
+                                    type="tel"
+                                    id="editNextOfKinPhone"
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="button-row">
+
+                            <button
+                                type="submit"
+                                id="savePatientButton"
+                                class="primary-button"
+                            >
+                                Save Changes
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+
+                <!-- ADD TREATMENT -->
+
+                <div class="treatment-section">
+
+                    <h3>Add Treatment / Medical Notes</h3>
+
+                    <form id="treatmentForm">
+
+                        <div class="form-grid">
+
+                            <div class="form-group">
+
+                                <label for="treatmentDate">
+                                    Treatment Date
+                                </label>
+
+                                <input
+                                    type="date"
+                                    id="treatmentDate"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="treatmentTime">
+                                    Treatment Time
+                                </label>
+
+                                <input
+                                    type="time"
+                                    id="treatmentTime"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="form-group full">
+
+                                <label for="treatmentDetails">
+                                    Treatment, Drugs & General Medical Notes
+                                </label>
+
+                                <textarea
+                                    id="treatmentDetails"
+                                    style="min-height: 150px;"
+                                    placeholder="Enter treatment given, drugs administered/prescribed, treatment details, observations and general medical notes..."
+                                    required
+                                ></textarea>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="button-row">
+
+                            <button
+                                type="submit"
+                                id="saveTreatmentButton"
+                                class="primary-button"
+                            >
+                                Save Treatment
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+
+                <!-- TREATMENT HISTORY -->
+
+                <div class="treatment-section">
+
+                    <h3>Treatment History</h3>
+
+                    <div id="treatmentHistory"></div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script>
+
+        /*
+         * =====================================================
+         * B-RACHEAL STAFF DASHBOARD
+         * JavaScript is embedded directly in this HTML.
+         * =====================================================
+         */
+
+
+        const API_BASE_URL = "http://127.0.0.1:3000/api";
+
+
+        const token = localStorage.getItem("bRachealToken");
+
+        const storedUser = localStorage.getItem("bRachealUser");
+
+
+        /*
+         * PAGE ELEMENTS
+         */
+
+        const staffName = document.getElementById("staffName");
+
+        const logoutButton = document.getElementById("logoutButton");
+
+        const dashboardMessage = document.getElementById("dashboardMessage");
+
+        const patientForm = document.getElementById("patientForm");
+
+        const registerPatientButton =
+            document.getElementById("registerPatientButton");
+
+        const patientSearch =
+            document.getElementById("patientSearch");
+
+        const searchPatientButton =
+            document.getElementById("searchPatientButton");
+
+        const patientResults =
+            document.getElementById("patientResults");
+
+        const patientRecordPanel =
+            document.getElementById("patientRecordPanel");
+
+        const closeRecordButton =
+            document.getElementById("closeRecordButton");
+
+        const editPatientForm =
+            document.getElementById("editPatientForm");
+
+        const savePatientButton =
+            document.getElementById("savePatientButton");
+
+        const treatmentForm =
+            document.getElementById("treatmentForm");
+
+        const saveTreatmentButton =
+            document.getElementById("saveTreatmentButton");
+
+        const treatmentHistory =
+            document.getElementById("treatmentHistory");
+
+
+        let currentPatientId = null;
+
+
+        /*
+         * =====================================================
+         * CHECK LOGIN
+         * =====================================================
+         */
+
+        if (!token || !storedUser) {
+
+            window.location.href = "login.html";
+
+        }
+
+
+        let currentUser;
+
+
+        try {
+
+            currentUser = JSON.parse(storedUser);
+
+        } catch (error) {
+
+            localStorage.removeItem("bRachealToken");
+
+            localStorage.removeItem("bRachealUser");
+
+            window.location.href = "login.html";
+
+        }
+
+
+        /*
+         * ONLY STAFF CAN USE THIS DASHBOARD
+         */
+
+        if (!currentUser || currentUser.role !== "staff") {
+
+            localStorage.removeItem("bRachealToken");
+
+            localStorage.removeItem("bRachealUser");
+
+            window.location.href = "login.html";
+
+        }
+
+
+        /*
+         * DISPLAY STAFF NAME
+         */
+
+        if (currentUser && currentUser.fullName) {
+
+            staffName.textContent = currentUser.fullName;
+
+        } else {
+
+            staffName.textContent = "Staff";
+
+        }
+
+
+        /*
+         * =====================================================
+         * MESSAGE FUNCTION
+         * =====================================================
+         */
+
+        function showMessage(message, type) {
+
+            dashboardMessage.textContent = message;
+
+            dashboardMessage.className =
+                "message " + type;
+
+        }
+
+
+        function clearMessage() {
+
+            dashboardMessage.textContent = "";
+
+            dashboardMessage.className = "message";
+
+        }
+
+
+        /*
+         * =====================================================
+         * ESCAPE HTML
+         * Prevents patient data from becoming HTML.
+         * =====================================================
+         */
+
+        function escapeHtml(value) {
+
+            if (value === null || value === undefined) {
+
+                return "";
+
+            }
+
+            return String(value)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+
+        }
+
+
+        /*
+         * =====================================================
+         * API REQUEST FUNCTION
+         * =====================================================
+         */
+
+        async function apiRequest(url, options = {}) {
+
+            const requestOptions = {
+
+                ...options,
+
+                headers: {
+
+                    ...(options.headers || {}),
+
+                    "Content-Type": "application/json",
+
+                    "Authorization":
+                        "Bearer " + token
+
+                }
+
+            };
+
+
+            const response = await fetch(
+                API_BASE_URL + url,
+                requestOptions
+            );
+
+
+            if (response.status === 401 ||
+                response.status === 403) {
+
+                localStorage.removeItem("bRachealToken");
+
+                localStorage.removeItem("bRachealUser");
+
+                window.location.href = "login.html";
+
+                throw new Error(
+                    "Your session has expired."
+                );
+
+            }
+
+
+            let data;
+
+            try {
+
+                data = await response.json();
+
+            } catch (error) {
+
+                throw new Error(
+                    "The server returned an invalid response."
+                );
+
+            }
+
+
+            if (!response.ok || data.success === false) {
+
+                throw new Error(
+                    data.message ||
+                    "Something went wrong."
+                );
+
+            }
+
+
+            return data;
+
+        }
+
+
+        /*
+         * =====================================================
+         * REGISTER PATIENT
+         * =====================================================
+         */
+
+        patientForm.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                const name =
+                    document.getElementById("patientName")
+                    .value.trim();
+
+
+                const sex =
+                    document.getElementById("patientSex")
+                    .value;
+
+
+                const dateOfBirth =
+                    document.getElementById("patientDateOfBirth")
+                    .value;
+
+
+                const phone =
+                    document.getElementById("patientPhone")
+                    .value.trim();
+
+
+                const address =
+                    document.getElementById("patientAddress")
+                    .value.trim();
+
+
+                const nextOfKin =
+                    document.getElementById("nextOfKin")
+                    .value.trim();
+
+
+                const nextOfKinPhone =
+                    document.getElementById("nextOfKinPhone")
+                    .value.trim();
+
+
+                if (!name) {
+
+                    showMessage(
+                        "Please enter the patient's full name.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+                registerPatientButton.disabled = true;
+
+                registerPatientButton.textContent =
+                    "Registering patient…";
+
+
+                showMessage(
+                    "Registering patient… Please wait.",
+                    "loading"
+                );
+
+
+                try {
+
+                    const data = await apiRequest(
+                        "/patients",
+                        {
+                            method: "POST",
+
+                            body: JSON.stringify({
+
+                                name: name,
+
+                                sex: sex,
+
+                                dateOfBirth: dateOfBirth,
+
+                                phone: phone,
+
+                                address: address,
+
+                                nextOfKin: nextOfKin,
+
+                                nextOfKinPhone:
+                                    nextOfKinPhone
+
+                            })
+
+                        }
+                    );
+
+
+                    showMessage(
+                        "Patient registered successfully. Patient ID: " +
+                        data.patient.patientId,
+                        "success"
+                    );
+
+
+                    /*
+                     * RESET FORM
+                     */
+
+                    patientForm.reset();
+
+
+                 /*
+ * PUT NEW PATIENT ID INTO SEARCH
+ */
+
+patientSearch.value =
+    data.patient.patientId;
+
+
+/*
+ * FIND THE NEW PATIENT
+ * USING THE GENERATED PATIENT ID
+ */
+
+const searchData =
+    await apiRequest(
+        "/patients/search?q=" +
+        encodeURIComponent(
+            data.patient.patientId
+        )
+    );
+
+
+const newPatients =
+    searchData.patients || [];
+
+
+if (newPatients.length === 0) {
+
+    throw new Error(
+        "Patient was registered, but the new patient record could not be found."
+    );
+
+}
+
+
+const newPatient =
+    newPatients[0];
+
+
+/*
+ * AUTOMATICALLY OPEN THE RECORD
+ * USING THE DATABASE NUMERIC ID
+ */
+
+await openPatientRecord(
+    newPatient.id
+);
+
+                } catch (error) {
+
+                    console.error(
+                        "Register patient error:",
+                        error
+                    );
+
+
+                    showMessage(
+                        error.message ||
+                        "Unable to register patient.",
+                        "error"
+                    );
+
+                } finally {
+
+                    registerPatientButton.disabled = false;
+
+                    registerPatientButton.textContent =
+                        "Register Patient";
+
+                }
+
+            }
+        );
+
+
+        /*
+         * =====================================================
+         * SEARCH PATIENT
+         * =====================================================
+         */
+
+        searchPatientButton.addEventListener(
+            "click",
+            searchPatients
+        );
+
+
+        patientSearch.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (event.key === "Enter") {
+
+                    event.preventDefault();
+
+                    searchPatients();
+
+                }
+
+            }
+        );
+
+
+        async function searchPatients() {
+
+            const query =
+                patientSearch.value.trim();
+
+
+            if (!query) {
+
+                showMessage(
+                    "Enter a patient name or Patient ID to search.",
+                    "error"
+                );
+
+                patientSearch.focus();
+
+                return;
+
+            }
+
+
+            searchPatientButton.disabled = true;
+
+            searchPatientButton.textContent =
+                "Searching…";
+
+
+            showMessage(
+                "Searching… Please wait.",
+                "loading"
+            );
+
+
+            patientResults.innerHTML = "";
+
+
+            try {
+
+                const data = await apiRequest(
+                    "/patients/search?q=" +
+                    encodeURIComponent(query)
+                );
+
+
+                const patients = data.patients || [];
+
+
+                if (patients.length === 0) {
+
+                    patientResults.innerHTML = `
+                        <div class="empty-state">
+                            No patient records found.
+                        </div>
+                    `;
+
+                    showMessage(
+                        "No patient records found.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+                let html = `
+
+                    <h3 class="results-title">
+                        Search Results
+                    </h3>
+
+                    <div class="table-wrapper">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+                                    <th>Patient ID</th>
+                                    <th>Full Name</th>
+                                    <th>Sex</th>
+                                    <th>Phone</th>
+                                    <th>Action</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+                `;
+
+
+                patients.forEach(function (patient) {
+
+                    html += `
+
+                        <tr>
+
+                            <td>
+                                ${escapeHtml(
+                                    patient.patientId
+                                )}
+                            </td>
+
+                            <td>
+                                ${escapeHtml(
+                                    patient.name
+                                )}
+                            </td>
+
+                            <td>
+                                ${escapeHtml(
+                                    patient.sex || "-"
+                                )}
+                            </td>
+
+                            <td>
+                                ${escapeHtml(
+                                    patient.phone || "-"
+                                )}
+                            </td>
+
+                            <td>
+
+                                <button
+                                    type="button"
+                                    class="primary-button view-patient-button"
+                                    data-id="${escapeHtml(
+                                        patient.id
+                                    )}"
+                                >
+                                    View Record
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                    `;
+
+                });
+
+
+                html += `
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                `;
+
+
+                patientResults.innerHTML = html;
+
+
+                /*
+                 * ADD CLICK EVENTS TO VIEW BUTTONS
+                 */
+
+                const viewButtons =
+                    document.querySelectorAll(
+                        ".view-patient-button"
+                    );
+
+
+                viewButtons.forEach(function (button) {
+
+                    button.addEventListener(
+                        "click",
+                        async function () {
+
+                            await openPatientRecord(
+                                button.dataset.id,
+                                button
+                            );
+
+                        }
+                    );
+
+                });
+
+
+                showMessage(
+                    patients.length +
+                    " patient record" +
+                    (patients.length === 1 ? "" : "s") +
+                    " found.",
+                    "success"
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Search error:",
+                    error
+                );
+
+
+                showMessage(
+                    error.message ||
+                    "Unable to search patients.",
+                    "error"
+                );
+
+            } finally {
+
+                searchPatientButton.disabled = false;
+
+                searchPatientButton.textContent =
+                    "Search";
+
+            }
+
+        }
+
+
+        /*
+         * =====================================================
+         * OPEN PATIENT RECORD
+         * =====================================================
+         */
+
+        async function openPatientRecord(
+            patientId,
+            clickedButton = null
+        ) {
+
+            if (clickedButton) {
+
+                clickedButton.disabled = true;
+
+                clickedButton.textContent =
+                    "Opening…";
+
+            }
+
+
+            showMessage(
+                "Opening patient record…",
+                "loading"
+            );
+
+
+            try {
+
+                const data = await apiRequest(
+                    "/patients/" + patientId
+                );
+
+
+                const patient = data.patient;
+
+
+                if (!patient) {
+
+                    throw new Error(
+                        "Patient record was not found."
+                    );
+
+                }
+
+
+                currentPatientId =
+                    patient.id;
+
+
+                /*
+                 * DISPLAY PATIENT DETAILS
+                 */
+
+                document.getElementById(
+                    "recordPatientName"
+                ).textContent =
+                    patient.name || "-";
+
+
+                document.getElementById(
+                    "recordPatientId"
+                ).textContent =
+                    "Patient ID: " +
+                    (patient.patientId || "-");
+
+
+                document.getElementById(
+                    "recordName"
+                ).textContent =
+                    patient.name || "-";
+
+
+                document.getElementById(
+                    "recordSex"
+                ).textContent =
+                    patient.sex || "-";
+
+
+                document.getElementById(
+                    "recordDateOfBirth"
+                ).textContent =
+                    patient.dateOfBirth || "-";
+
+
+                document.getElementById(
+                    "recordPhone"
+                ).textContent =
+                    patient.phone || "-";
+
+
+                document.getElementById(
+                    "recordAddress"
+                ).textContent =
+                    patient.address || "-";
+
+
+                document.getElementById(
+                    "recordNextOfKin"
+                ).textContent =
+                    patient.nextOfKin || "-";
+
+
+                document.getElementById(
+                    "recordNextOfKinPhone"
+                ).textContent =
+                    patient.nextOfKinPhone || "-";
+
+
+                /*
+                 * FILL EDIT FORM
+                 */
+
+                document.getElementById(
+                    "editName"
+                ).value =
+                    patient.name || "";
+
+
+                document.getElementById(
+                    "editSex"
+                ).value =
+                    patient.sex || "";
+
+
+                document.getElementById(
+                    "editDateOfBirth"
+                ).value =
+                    patient.dateOfBirth || "";
+
+
+                document.getElementById(
+                    "editPhone"
+                ).value =
+                    patient.phone || "";
+
+
+                document.getElementById(
+                    "editAddress"
+                ).value =
+                    patient.address || "";
+
+
+                document.getElementById(
+                    "editNextOfKin"
+                ).value =
+                    patient.nextOfKin || "";
+
+
+                document.getElementById(
+                    "editNextOfKinPhone"
+                ).value =
+                    patient.nextOfKinPhone || "";
+
+
+                /*
+                 * DISPLAY TREATMENT HISTORY
+                 */
+
+                renderTreatmentHistory(
+                    patient.treatments || []
+                );
+
+
+                /*
+                 * SHOW RECORD
+                 */
+
+                patientRecordPanel.style.display =
+                    "block";
+
+
+                patientRecordPanel.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+
+                showMessage(
+                    "Patient record opened successfully.",
+                    "success"
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Open patient error:",
+                    error
+                );
+
+
+                showMessage(
+                    error.message ||
+                    "Unable to open patient record.",
+                    "error"
+                );
+
+            } finally {
+
+                if (clickedButton) {
+
+                    clickedButton.disabled = false;
+
+                    clickedButton.textContent =
+                        "View Record";
+
+                }
+
+            }
+
+        }
+
+
+        /*
+         * =====================================================
+         * RENDER TREATMENT HISTORY
+         * =====================================================
+         */
+
+        function renderTreatmentHistory(
+            treatments
+        ) {
+
+            if (!treatments ||
+                treatments.length === 0) {
+
+                treatmentHistory.innerHTML = `
+
+                    <div class="empty-state">
+                        No treatment history has been recorded
+                        for this patient.
+                    </div>
+
+                `;
+
+                return;
+
+            }
+
+
+            let html = "";
+
+
+            treatments.forEach(function (treatment) {
+
+                html += `
+
+                    <div class="treatment-entry">
+
+                        <div class="treatment-meta">
+
+                            <span>
+                                <strong>Date:</strong>
+                                ${escapeHtml(
+                                    treatment.date || "-"
+                                )}
+                            </span>
+
+                            <span>
+                                <strong>Time:</strong>
+                                ${escapeHtml(
+                                    treatment.time || "-"
+                                )}
+                            </span>
+
+                            <span>
+                                <strong>Recorded by:</strong>
+                                ${escapeHtml(
+                                    treatment.recordedBy || "-"
+                                )}
+                            </span>
+
+                        </div>
+
+                        <div class="treatment-details">
+                            ${escapeHtml(
+                                treatment.details || "-"
+                            )}
+                        </div>
+
+                    </div>
+
+                `;
+
+            });
+
+
+            treatmentHistory.innerHTML = html;
+
+        }
+
+
+        /*
+         * =====================================================
+         * CLOSE PATIENT RECORD
+         * =====================================================
+         */
+
+        closeRecordButton.addEventListener(
+            "click",
+            function () {
+
+                patientRecordPanel.style.display =
+                    "none";
+
+                currentPatientId = null;
+
+                clearMessage();
+
+            }
+        );
+
+
+        /*
+         * =====================================================
+         * SAVE PATIENT CHANGES
+         * =====================================================
+         */
+
+        editPatientForm.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                if (!currentPatientId) {
+
+                    showMessage(
+                        "No patient record is currently open.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+                const name =
+                    document.getElementById(
+                        "editName"
+                    ).value.trim();
+
+
+                const sex =
+                    document.getElementById(
+                        "editSex"
+                    ).value;
+
+
+                const dateOfBirth =
+                    document.getElementById(
+                        "editDateOfBirth"
+                    ).value;
+
+
+                const phone =
+                    document.getElementById(
+                        "editPhone"
+                    ).value.trim();
+
+
+                const address =
+                    document.getElementById(
+                        "editAddress"
+                    ).value.trim();
+
+
+                const nextOfKin =
+                    document.getElementById(
+                        "editNextOfKin"
+                    ).value.trim();
+
+
+                const nextOfKinPhone =
+                    document.getElementById(
+                        "editNextOfKinPhone"
+                    ).value.trim();
+
+
+                if (!name) {
+
+                    showMessage(
+                        "Patient name cannot be empty.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+                savePatientButton.disabled = true;
+
+                savePatientButton.textContent =
+                    "Saving…";
+
+
+                showMessage(
+                    "Saving patient information…",
+                    "loading"
+                );
+
+
+                try {
+
+                    await apiRequest(
+                        "/patients/" +
+                        currentPatientId,
+                        {
+                            method: "PUT",
+
+                            body: JSON.stringify({
+
+                                name: name,
+
+                                sex: sex,
+
+                                dateOfBirth:
+                                    dateOfBirth,
+
+                                phone: phone,
+
+                                address: address,
+
+                                nextOfKin:
+                                    nextOfKin,
+
+                                nextOfKinPhone:
+                                    nextOfKinPhone
+
+                            })
+
+                        }
+                    );
+
+
+                    showMessage(
+                        "Patient information saved successfully.",
+                        "success"
+                    );
+
+
+                    /*
+                     * RELOAD RECORD
+                     */
+
+                    await openPatientRecord(
+                        currentPatientId
+                    );
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Save patient error:",
+                        error
+                    );
+
+
+                    showMessage(
+                        error.message ||
+                        "Unable to save patient information.",
+                        "error"
+                    );
+
+                } finally {
+
+                    savePatientButton.disabled = false;
+
+                    savePatientButton.textContent =
+                        "Save Changes";
+
+                }
+
+            }
+        );
+
+
+        /*
+         * =====================================================
+         * SAVE TREATMENT
+         * =====================================================
+         */
+
+        treatmentForm.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                if (!currentPatientId) {
+
+                    showMessage(
+                        "Please open a patient record first.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+                const date =
+                    document.getElementById(
+                        "treatmentDate"
+                    ).value;
+
+
+                const time =
+                    document.getElementById(
+                        "treatmentTime"
+                    ).value;
+
+
+                const details =
+                    document.getElementById(
+                        "treatmentDetails"
+                    ).value.trim();
+
+
+                if (!date) {
+
+                    showMessage(
+                        "Please enter the treatment date.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+                if (!time) {
+
+                    showMessage(
+                        "Please enter the treatment time.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+                if (!details) {
+
+                    showMessage(
+                        "Please enter the treatment or medical notes.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+                saveTreatmentButton.disabled = true;
+
+                saveTreatmentButton.textContent =
+                    "Saving treatment…";
+
+
+                showMessage(
+                    "Saving treatment… Please wait.",
+                    "loading"
+                );
+
+
+                try {
+
+                    await apiRequest(
+                        "/patients/" +
+                        currentPatientId +
+                        "/treatments",
+                        {
+                            method: "POST",
+
+                            body: JSON.stringify({
+
+                                date: date,
+
+                                time: time,
+
+                                details: details
+
+                            })
+
+                        }
+                    );
+
+
+                    showMessage(
+                        "Treatment saved successfully.",
+                        "success"
+                    );
+
+
+                    /*
+                     * RESET TREATMENT FORM
+                     */
+
+                    treatmentForm.reset();
+
+
+                    /*
+                     * LOAD UPDATED PATIENT RECORD
+                     */
+
+                    await openPatientRecord(
+                        currentPatientId
+                    );
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Save treatment error:",
+                        error
+                    );
+
+
+                    showMessage(
+                        error.message ||
+                        "Unable to save treatment.",
+                        "error"
+                    );
+
+                } finally {
+
+                    saveTreatmentButton.disabled = false;
+
+                    saveTreatmentButton.textContent =
+                        "Save Treatment";
+
+                }
+
+            }
+        );
+
+
+        /*
+         * =====================================================
+         * LOGOUT
+         * =====================================================
+         */
+
+        logoutButton.addEventListener(
+            "click",
+            function () {
+
+                logoutButton.disabled = true;
+
+                logoutButton.textContent =
+                    "Logging out…";
+
+
+                localStorage.removeItem(
+                    "bRachealToken"
+                );
+
+
+                localStorage.removeItem(
+                    "bRachealUser"
+                );
+
+
+                showMessage(
+                    "Logging out…",
+                    "loading"
+                );
+
+
+                setTimeout(function () {
+
+                    window.location.href =
+                        "login.html";
+
+                }, 500);
+
+            }
+        );
+
+
+        /*
+         * =====================================================
+         * SET TODAY'S DATE AND CURRENT TIME
+         * FOR NEW TREATMENT
+         * =====================================================
+         */
+
+        function setTreatmentDateTime() {
+
+            const now = new Date();
+
+
+            const year =
+                now.getFullYear();
+
+
+            const month =
+                String(
+                    now.getMonth() + 1
+                ).padStart(2, "0");
+
+
+            const day =
+                String(
+                    now.getDate()
+                ).padStart(2, "0");
+
+
+            const hours =
+                String(
+                    now.getHours()
+                ).padStart(2, "0");
+
+
+            const minutes =
+                String(
+                    now.getMinutes()
+                ).padStart(2, "0");
+
+
+            document.getElementById(
+                "treatmentDate"
+            ).value =
+                `${year}-${month}-${day}`;
+
+
+            document.getElementById(
+                "treatmentTime"
+            ).value =
+                `${hours}:${minutes}`;
+
+        }
+
+
+        setTreatmentDateTime();
+
+
+    </script>
+
+</body>
+</html>
